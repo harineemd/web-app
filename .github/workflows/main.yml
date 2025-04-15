@@ -2,22 +2,32 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches:
+      - main  # Trigger on push to the main branch (or any branch you want)
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v2  # Checkout the code
 
-    - name: Build Docker Image
-      run: |
-        docker build -t web-app .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2  # Set up Docker Buildx for building the image
 
-    - name: Run Container
-      run: |
-        docker run -d -p 8080:80 web-app
+      - name: Build Docker Image
+        run: |
+          docker build -t web-app .  # Build the Docker image
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  # Set Docker Hub credentials in GitHub Secrets
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push web-app  # Push the image to Docker Hub
+
+      
