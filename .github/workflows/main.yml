@@ -31,11 +31,11 @@ jobs:
           
       - name: Push Docker image
         run: |
-          docker push web-app:latest
+          docker push harineemd/web-app:latest
 
       # Example of replacing `set-output` with environment file
       - name: Set image name to environment variable
-        run: echo "IMAGE_NAME=web-app:latest" >> $GITHUB_ENV
+        run: echo "IMAGE_NAME=harineemd/web-app:latest" >> $GITHUB_ENV
 
       # Example of replacing `save-state` with environment file
       - name: Save build state using environment file
