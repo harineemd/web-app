@@ -22,7 +22,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/web-app-new:latest --load .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/web-app-new:latest .
 
       - name: Push Docker image to DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/web-app-new:latest
