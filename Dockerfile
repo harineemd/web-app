@@ -1,11 +1,20 @@
-# Use an Nginx base image
-FROM nginx:alpine
+# Use an official node image as the base image
+FROM node:16
 
-# Remove the default nginx static assets
-RUN rm -rf /usr/share/nginx/html/*
+# Set the working directory in the container
+WORKDIR /app
 
-# Copy custom files
-COPY . /usr/share/nginx/html
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Expose port
-EXPOSE 80
+# Install dependencies
+RUN npm install
+
+# Copy all files into the container
+COPY . .
+
+# Expose the port the app will run on
+EXPOSE 3000
+
+# Start the app
+CMD ["npm", "start"]
