@@ -1,42 +1,26 @@
-name: Docker Build and Push
-
+name: Build and Push Docker Image
+ 
 on:
   push:
     branches:
-      - master  # Use 'main' if your default branch is 'main'
-
+      - master
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+ 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Cache Docker layers
-        uses: actions/cache@v3  # Updated to v3
+        uses: actions/checkout@v3
+ 
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Build Docker image
-        id: build
-        run: |
-          docker buildx build --platform linux/amd64 -t web-app:latest .
-          
-      - name: Push Docker image
-        run: |
-          docker push harineemd/web-app:latest
-
-      # Example of replacing `set-output` with environment file
-      - name: Set image name to environment variable
-        run: echo "IMAGE_NAME=harineemd/web-app:latest" >> $GITHUB_ENV
-
-      # Example of replacing `save-state` with environment file
-      - name: Save build state using environment file
-        run: echo "BUILD_STATUS=success" >> $GITHUB_ENV
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+      - name: Build the Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/basic-website .
+ 
+      - name: Push to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/basic-website
